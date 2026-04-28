@@ -20,7 +20,7 @@
         .font-orbit { font-family: 'Orbitron', sans-serif; font-variant-numeric: tabular-nums; }
         .score-box { background: linear-gradient(180deg, #1a1a1a 0%, #000 100%); border-bottom: 4px solid var(--kl-orange); position: relative; overflow: hidden; flex-shrink: 0; }
         
-        .indicator-bar { transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); origin: top; }
+        .indicator-bar { transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); transform-origin: top; }
         .weapon-append { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-shrink: 0; }
         
         .weapon-btn { background: #222; border: 1px solid #444; padding: 10px 5px; border-radius: 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: #eee; }
@@ -28,20 +28,19 @@
         .btn-active { background: var(--kl-orange) !important; color: black !important; border-color: white !important; }
         .btn-pres { border-color: var(--kl-azure); color: var(--kl-azure); }
         .btn-pres-active { background: var(--kl-azure) !important; color: black !important; }
+
+        .copy-box { background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.2); padding: 10px; border-radius: 10px; font-family: monospace; font-size: 10px; color: #aaa; word-break: break-all; }
     </style>
 </head>
 <body data-view="all">
 
-    <!-- SCOREBOARD VIEW -->
+    <!-- SCOREBOARD VIEW (Da usare su OBS) -->
     <div id="section-scoreboard" class="view-section items-center justify-center">
         <div class="relative flex items-center justify-center scale-[0.85] mt-[-50px]">
             
-            <!-- Appendice A -->
             <div id="append-A" class="hidden weapon-append flex flex-col items-end justify-center px-8 h-[90px] w-[300px] rounded-l-2xl -mr-1 animate-pulse shadow-2xl"></div>
 
-            <!-- Centro -->
             <div class="flex items-center shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50">
-                <!-- Team Casa -->
                 <div class="score-box w-[420px] h-[90px] flex items-center px-8 rounded-l-2xl border-r border-white/5">
                     <div class="absolute left-0 top-0 bottom-0 w-2.5 flex flex-col gap-0.5 py-1.5">
                         <div id="led-wA" class="indicator-bar flex-1 bg-white shadow-[0_0_10px_white]"></div>
@@ -51,13 +50,11 @@
                     <span id="txt-scoreA" class="text-7xl font-black text-orange-500 w-20 text-center font-orbit">0</span>
                 </div>
 
-                <!-- Timer -->
-                <div class="bg-orange-500 w-[190px] h-[90px] flex flex-col items-center justify-center border-b-[6px] border-orange-700 flex-shrink-0 z-[100]">
+                <div id="timer-block" class="bg-orange-500 w-[190px] h-[90px] flex flex-col items-center justify-center border-b-[6px] border-orange-700 flex-shrink-0 z-[100]">
                     <span id="txt-period" class="text-[10px] font-bold text-black/60 uppercase tracking-tighter mb-[-5px]">1° TEMPO</span>
                     <span id="txt-timer" class="text-6xl font-black text-black font-orbit">00:00</span>
                 </div>
 
-                <!-- Team Ospiti -->
                 <div class="score-box w-[420px] h-[90px] flex items-center px-8 rounded-r-2xl border-l border-white/5">
                     <span id="txt-scoreB" class="text-7xl font-black text-orange-500 w-20 text-center font-orbit">0</span>
                     <span id="txt-nameB" class="text-3xl font-black uppercase truncate flex-1 ml-5 font-orbit">OSPITI</span>
@@ -68,30 +65,35 @@
                 </div>
             </div>
 
-            <!-- Appendice B -->
             <div id="append-B" class="hidden weapon-append flex flex-col items-start justify-center px-8 h-[90px] w-[300px] rounded-r-2xl -ml-1 animate-pulse shadow-2xl"></div>
         </div>
 
-        <!-- Dado -->
         <div id="dice-box" class="hidden mt-10 animate-bounce flex flex-col items-center">
             <div id="dice-res" class="w-28 h-28 bg-white text-black text-6xl font-black rounded-3xl flex items-center justify-center border-4 border-orange-500 font-orbit">?</div>
             <span class="text-white font-bold text-sm mt-3 tracking-[0.2em] uppercase bg-black/40 px-4 py-1 rounded-full">Dado della Lega</span>
         </div>
     </div>
 
-    <!-- CONTROLLER VIEW -->
+    <!-- CONTROLLER VIEW (Da usare sul Telefono) -->
     <div id="section-control" class="view-section flex-col items-center">
         <div class="bg-zinc-900 w-full max-w-2xl rounded-3xl p-6 border-t-8 border-orange-500 shadow-2xl space-y-6">
+            
             <div class="flex justify-between items-center border-b border-white/10 pb-4">
                 <h1 class="text-2xl font-black text-orange-500 italic uppercase">Regia KCR Cloud</h1>
-                <div id="sync-status" class="text-[8px] bg-green-500/20 text-green-500 px-2 py-1 rounded font-bold uppercase">Online</div>
+                <div id="sync-status" class="text-[8px] bg-red-500/20 text-red-500 px-2 py-1 rounded font-bold uppercase">Connecting...</div>
+            </div>
+
+            <!-- Box Link per il Telefono -->
+            <div class="bg-white/5 p-4 rounded-xl space-y-2">
+                <p class="text-[9px] uppercase font-bold text-gray-400">Link da inviare al telefono:</p>
+                <div class="copy-box" id="display-url">Caricamento link...</div>
+                <p class="text-[8px] italic text-gray-600">Apri questo link sul cellulare per usarlo come telecomando.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Squadra A -->
                 <div class="bg-white/5 p-4 rounded-2xl space-y-3">
-                    <input type="text" id="in-nameA" placeholder="TEAM CASA" class="w-full bg-black p-3 rounded-xl border border-white/10 text-white font-bold text-lg uppercase">
-                    <input type="text" id="in-starA" placeholder="STAR PLAYER A" class="w-full bg-black p-2 rounded-lg border border-orange-900/50 text-white text-xs uppercase">
+                    <input type="text" id="in-nameA" placeholder="TEAM CASA" class="w-full bg-black p-3 rounded-xl border border-white/10 text-white font-bold text-lg uppercase outline-none focus:border-orange-500">
+                    <input type="text" id="in-starA" placeholder="STAR PLAYER A" class="w-full bg-black p-2 rounded-lg border border-orange-900/50 text-white text-xs uppercase outline-none">
                     <div class="flex gap-2">
                         <button onclick="cmdScore('A', -1)" class="bg-zinc-800 p-4 rounded-xl flex-1 font-bold">-1</button>
                         <button onclick="cmdScore('A', 1)" class="bg-orange-600 p-4 rounded-xl flex-[2] font-black uppercase text-xl">Goal</button>
@@ -104,10 +106,9 @@
                     </div>
                 </div>
 
-                <!-- Squadra B -->
                 <div class="bg-white/5 p-4 rounded-2xl space-y-3">
-                    <input type="text" id="in-nameB" placeholder="TEAM OSPITI" class="w-full bg-black p-3 rounded-xl border border-white/10 text-white font-bold text-lg uppercase">
-                    <input type="text" id="in-starB" placeholder="STAR PLAYER B" class="w-full bg-black p-2 rounded-lg border border-orange-900/50 text-white text-xs uppercase">
+                    <input type="text" id="in-nameB" placeholder="TEAM OSPITI" class="w-full bg-black p-3 rounded-xl border border-white/10 text-white font-bold text-lg uppercase outline-none focus:border-orange-500">
+                    <input type="text" id="in-starB" placeholder="STAR PLAYER B" class="w-full bg-black p-2 rounded-lg border border-orange-900/50 text-white text-xs uppercase outline-none">
                     <div class="flex gap-2">
                         <button onclick="cmdScore('B', -1)" class="bg-zinc-800 p-4 rounded-xl flex-1 font-bold">-1</button>
                         <button onclick="cmdScore('B', 1)" class="bg-orange-600 p-4 rounded-xl flex-[2] font-black uppercase text-xl">Goal</button>
@@ -126,7 +127,7 @@
                     <button id="btn-timer" onclick="cmdToggleTimer()" class="w-full p-6 rounded-2xl font-black text-2xl uppercase border-b-8 bg-green-600 border-green-800">Avvia</button>
                     <div class="flex gap-2">
                         <button onclick="cmdResetTimer()" class="bg-zinc-800 p-2 rounded-lg flex-1 text-[10px] font-bold">RESET TEMPO</button>
-                        <button onclick="cmdTogglePeriod()" class="bg-zinc-800 p-2 rounded-lg flex-1 text-[10px] font-bold">CAMBIA TEMPO</button>
+                        <button onclick="cmdTogglePeriod()" class="bg-zinc-800 p-2 rounded-lg flex-1 text-[10px] font-bold">TEMPO</button>
                     </div>
                 </div>
                 <div class="space-y-2">
@@ -143,15 +144,15 @@
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Configurazione automatica (funziona solo se caricato online/local)
-        // Se usi GitHub, inserisci qui i tuoi dati Firebase se li hai, 
-        // altrimenti il sistema userà i parametri d'ambiente se presenti.
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "" };
+        // Configurazione
+        const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kcr-match-sync';
-        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'match', 'current');
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kcr-scoreboard-final';
+        
+        // DOCUMENT REFERENCE - 6 SEGMENTI (MANDATORIO)
+        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'match_sync', 'current_state');
 
         let state = {
             teamA: { name: "CASA", score: 0, starA: "", hasW: true, hasP: true },
@@ -165,29 +166,46 @@
         };
 
         const urlParams = new URLSearchParams(window.location.search);
-        const view = urlParams.get('view') || 'all';
+        const view = urlParams.get('view') || 'control'; // Default a control se non specificato
         document.body.dataset.view = view;
 
-        async function start() {
-            await signInAnonymously(auth);
-            onSnapshot(docRef, (snap) => {
-                if (snap.exists()) {
-                    state = snap.data();
-                    render();
-                }
-            });
+        // Visualizza il link nel controller
+        const urlDisplay = document.getElementById('display-url');
+        if(urlDisplay) {
+            const cleanUrl = window.location.href.split('?')[0];
+            urlDisplay.innerText = cleanUrl + "?view=control";
         }
 
-        const save = () => setDoc(docRef, state);
+        async function start() {
+            try {
+                const userCredential = await signInAnonymously(auth);
+                const syncStatus = document.getElementById('sync-status');
+                if(syncStatus) { syncStatus.innerText = "Online"; syncStatus.className = "text-[8px] bg-green-500/20 text-green-500 px-2 py-1 rounded font-bold uppercase"; }
+                
+                onSnapshot(docRef, (snap) => {
+                    if (snap.exists()) {
+                        state = snap.data();
+                        render();
+                    }
+                }, (err) => console.error("Firestore error:", err));
+            } catch (e) {
+                console.error("Auth error:", e);
+            }
+        }
 
-        // Timer engine (solo scoreboard)
+        const save = () => {
+            if(auth.currentUser) setDoc(docRef, state).catch(e => console.error("Save error:", e));
+        };
+
+        // Engine del Timer (Solo nella vista Scoreboard o All)
         setInterval(() => {
             if (state.isRunning && view !== 'control') {
                 state.timer++;
                 ['A', 'B'].forEach(t => {
-                    if (state.weapons[t].timeLeft > 0) state.weapons[t].timeLeft--;
-                    else if (state.weapons[t].active && state.weapons[t].name !== "STAR PLAYER" && state.weapons[t].name !== "RIGORE") {
-                         state.weapons[t].active = false;
+                    if (state.weapons[t].active && state.weapons[t].timeLeft > 0) {
+                        state.weapons[t].timeLeft--;
+                    } else if (state.weapons[t].active && state.weapons[t].name !== "STAR PLAYER" && state.weapons[t].name !== "RIGORE PRES.") {
+                        state.weapons[t].active = false;
                     }
                 });
                 render();
@@ -195,7 +213,7 @@
             }
         }, 1000);
 
-        // Comandi esposti a window per i button
+        // Funzioni globali per i bottoni
         window.cmdScore = (t, v) => { state[`team${t}`].score = Math.max(0, state[`team${t}`].score + v); save(); };
         window.cmdToggleTimer = () => { state.isRunning = !state.isRunning; save(); };
         window.cmdResetTimer = () => { state.timer = 0; save(); };
@@ -236,7 +254,7 @@
             save();
         };
 
-        // Inputs names sync
+        // Sync nomi input
         ['A', 'B'].forEach(t => {
             const inN = document.getElementById(`in-name${t}`);
             const inS = document.getElementById(`in-star${t}`);
@@ -247,16 +265,16 @@
         function render() {
             const fmt = (s) => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
             
-            // Scoreboard elements
-            const updateTxt = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = val; };
-            updateTxt('txt-nameA', state.teamA.name || "CASA");
-            updateTxt('txt-nameB', state.teamB.name || "OSPITI");
-            updateTxt('txt-scoreA', state.teamA.score);
-            updateTxt('txt-scoreB', state.teamB.score);
-            updateTxt('txt-timer', fmt(state.timer));
-            updateTxt('txt-period', state.period);
+            // Scoreboard update
+            const setTxt = (id, v) => { const el = document.getElementById(id); if(el) el.innerText = v; };
+            setTxt('txt-nameA', state.teamA.name || "CASA");
+            setTxt('txt-nameB', state.teamB.name || "OSPITI");
+            setTxt('txt-scoreA', state.teamA.score);
+            setTxt('txt-scoreB', state.teamB.score);
+            setTxt('txt-timer', fmt(state.timer));
+            setTxt('txt-period', state.period);
 
-            // LEDs
+            // LED Bars
             const setLed = (id, active) => { const el = document.getElementById(id); if(el) el.style.transform = active ? 'scaleY(1)' : 'scaleY(0)'; };
             setLed('led-wA', state.teamA.hasW); setLed('led-pA', state.teamA.hasP);
             setLed('led-wB', state.teamB.hasW); setLed('led-pB', state.teamB.hasP);
@@ -271,24 +289,23 @@
                         el.className = `weapon-append flex flex-col items-${t==='A'?'end':'start'} justify-center px-8 h-[90px] w-[300px] ${t==='A'?'rounded-l-2xl':'rounded-r-2xl'} animate-pulse shadow-2xl ${w.col}`;
                         el.innerHTML = `<span class="text-2xl font-black italic leading-none">${w.name}</span>` +
                             (w.name === 'STAR PLAYER' ? `<span class="text-sm font-bold opacity-70">${state['team'+t]['star'+t] || ''}</span>` : '') +
-                            (w.timeLeft > 0 && w.name !== 'STAR PLAYER' ? `<span class="text-3xl font-bold font-mono mt-1">${fmt(w.timeLeft)}</span>` : '');
+                            (w.timeLeft > 0 && w.name !== 'STAR PLAYER' && w.name !== 'RIGORE PRES.' ? `<span class="text-3xl font-bold font-mono mt-1">${fmt(w.timeLeft)}</span>` : '');
                     } else el.classList.add('hidden');
                 }
             });
 
             // Dice
             const dBox = document.getElementById('dice-box');
-            if(dBox) { dBox.classList.toggle('hidden', !state.dice.visible); updateTxt('dice-res', state.dice.res); }
+            if(dBox) { dBox.classList.toggle('hidden', !state.dice.visible); setTxt('dice-res', state.dice.res); }
 
-            // Controller status
+            // Sync controller UI
             const bT = document.getElementById('btn-timer');
             if(bT) {
                 bT.innerText = state.isRunning ? "PAUSA" : "AVVIA";
-                bT.className = `w-full p-6 rounded-2xl font-black text-2xl uppercase border-b-8 transition-all ${state.isRunning ? 'bg-red-600 border-red-900' : 'bg-green-600 border-green-900'}`;
+                bT.className = `w-full p-6 rounded-2xl font-black text-2xl uppercase border-b-8 transition-all ${state.isRunning ? 'bg-red-600 border-red-900' : 'bg-green-600 border-green-800'}`;
             }
 
-            // Button highlights (controller only)
-            if (view === 'control' || view === 'all') {
+            if (view === 'control') {
                 const highlight = (id, active) => { const el = document.getElementById(id); if(el) el.classList.toggle('btn-active', active); };
                 const highlightPres = (id, active) => { const el = document.getElementById(id); if(el) el.classList.toggle('btn-pres-active', active); };
                 highlight('btn-w-A-GOL', state.weapons.A.active && state.weapons.A.name==='GOL DOPPIO');
